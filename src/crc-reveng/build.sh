@@ -1,6 +1,8 @@
 #!/bin/bash
 set -xeuo pipefail
 
+cp -v config.h reveng-3.0.2/config.h
+
 pushd reveng-3.0.2
 
 find . -name '*.o'
