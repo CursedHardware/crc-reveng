@@ -1,27 +1,30 @@
+import { LocalEchoAddon } from '@gytx/xterm-local-echo'
 import toArgv from 'string-to-argv'
 import { ITerminalAddon, Terminal } from 'xterm'
-import { LocalEchoAddon } from '@gytx/xterm-local-echo'
-import { CommandProcedure, CommandNotFoundError } from './types'
+import { CommandDefiniton, CommandNotFoundError } from './types'
 
-export type CommandTable = Record<string, CommandProcedure>
+export type CommandTable = Record<string, CommandDefiniton>
 
 export class LocalShellAddon implements ITerminalAddon {
-  private commands: Map<string, CommandProcedure>
+  private commands: Map<string, CommandDefiniton>
   private echo = new LocalEchoAddon()
   private terminal: Terminal | undefined
 
   constructor(commands: CommandTable) {
-    this.commands = new Map(Object.entries<CommandProcedure>(commands))
+    this.commands = new Map(Object.entries(commands))
   }
 
   activate(terminal: Terminal) {
     this.terminal = terminal
     this.echo.activate(terminal)
-    this.echo.history.entries.push(...this.commands.keys())
+    this.echo.addAutocompleteHandler(this.onAutoCompleteCommandHandler)
+    this.echo.addAutocompleteHandler(this.onAutoCompleteArgvHandler)
     this.repl()
   }
 
   dispose() {
+    this.echo.removeAutocompleteHandler(this.onAutoCompleteCommandHandler)
+    this.echo.removeAutocompleteHandler(this.onAutoCompleteArgvHandler)
     this.echo.dispose()
   }
 
@@ -41,8 +44,20 @@ export class LocalShellAddon implements ITerminalAddon {
   private async run(command: string | undefined, args: string[]) {
     if (command === undefined) return
     if (this.terminal === undefined) return
-    const procedure = this.commands.get(command)
-    if (!procedure) throw new CommandNotFoundError(command)
-    return procedure(this.terminal, args)
+    const definition = this.commands.get(command)
+    if (!definition) throw new CommandNotFoundError(command)
+    return definition.procedure(this.terminal, args)
+  }
+
+  private onAutoCompleteCommandHandler = (index: number, tokens: string[]) => {
+    if (index !== 0) return []
+    const commands = [...this.commands.keys()]
+    return commands.filter((x) => !tokens.includes(x))
+  }
+
+  private onAutoCompleteArgvHandler = (index: number, tokens: string[]) => {
+    if (index === 0) return []
+    const definition = this.commands.get(tokens[0])
+    return definition?.onAutoCompleteHandler?.(index, tokens) ?? []
   }
 }

@@ -1,9 +1,9 @@
 import type { Terminal } from 'xterm'
 
-export type CommandProcedure = (
-  term: Terminal,
-  argv: string[],
-) => Promise<void> | void
+export interface CommandDefiniton {
+  procedure(term: Terminal, argv: string[]): Promise<void> | void
+  onAutoCompleteHandler?(index: number, tokens: string[]): string[]
+}
 
 export class CommandNotFoundError extends TypeError {
   constructor(command: string) {
