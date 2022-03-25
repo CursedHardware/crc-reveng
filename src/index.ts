@@ -1,14 +1,13 @@
-import program from './crc-reveng/reveng'
+import { debounce } from 'ts-debounce'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
+import { runRevEng } from './crc-reveng'
+import { LocalShellAddon } from './local-shell'
+import { CommandTable } from './local-shell/local-shell'
 
 import 'xterm/css/xterm.css'
 import 'normalize.css/normalize.css'
 import './modified.css'
-
-import { LocalShellAddon } from './local-shell'
-import { CommandTable } from './local-shell/local-shell'
-import { runRevEng } from './crc-reveng'
 
 const commands: CommandTable = {
   clear(term) {
@@ -29,7 +28,9 @@ term.open(document.body)
   const fitAddon = new FitAddon()
   term.loadAddon(fitAddon)
   fitAddon.fit()
-  term.onResize(() => fitAddon.fit())
+  const onResize = debounce(() => fitAddon.fit(), 100)
+  window.addEventListener('resize', () => onResize())
+  term.onResize(() => onResize())
 }
 
 setTimeout(() => term.paste('reveng -h\n'), 500)
