@@ -8,22 +8,14 @@ import './modified.css'
 
 import { LocalShellAddon } from './local-shell'
 import { CommandTable } from './local-shell/local-shell'
+import { runRevEng } from './crc-reveng'
 
 const commands: CommandTable = {
   clear(term) {
     term.clear()
   },
-  async reveng(term, argv) {
-    await program({
-      thisProgram: 'reveng',
-      arguments: argv,
-      print(message) {
-        term.writeln(message)
-      },
-      printErr(message) {
-        term.writeln(message)
-      },
-    })
+  reveng(term, argv) {
+    return runRevEng(argv, (message) => term.writeln(message))
   },
 }
 

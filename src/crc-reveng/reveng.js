@@ -32,6 +32,12 @@ Module['ready'] = new Promise(function(resolve, reject) {
   readyPromiseReject = reject;
 });
 
+      if (!Object.getOwnPropertyDescriptor(Module['ready'], '_reveng')) {
+        Object.defineProperty(Module['ready'], '_reveng', { configurable: true, get: function() { abort('You are getting _reveng on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js') } });
+        Object.defineProperty(Module['ready'], '_reveng', { configurable: true, set: function() { abort('You are setting _reveng on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js') } });
+      }
+    
+
       if (!Object.getOwnPropertyDescriptor(Module['ready'], '_main')) {
         Object.defineProperty(Module['ready'], '_main', { configurable: true, get: function() { abort('You are getting _main on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js') } });
         Object.defineProperty(Module['ready'], '_main', { configurable: true, set: function() { abort('You are setting _main on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js') } });
@@ -4618,6 +4624,9 @@ var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__w
 var _main = Module["_main"] = createExportWrapper("main");
 
 /** @type {function(...*):?} */
+var _reveng = Module["_reveng"] = createExportWrapper("reveng");
+
+/** @type {function(...*):?} */
 var ___errno_location = Module["___errno_location"] = createExportWrapper("__errno_location");
 
 /** @type {function(...*):?} */
@@ -4666,8 +4675,8 @@ var dynCall_jiji = Module["dynCall_jiji"] = createExportWrapper("dynCall_jiji");
 
 unexportedRuntimeFunction('intArrayFromString', false);
 unexportedRuntimeFunction('intArrayToString', false);
-unexportedRuntimeFunction('ccall', false);
-unexportedRuntimeFunction('cwrap', false);
+Module["ccall"] = ccall;
+Module["cwrap"] = cwrap;
 unexportedRuntimeFunction('setValue', false);
 unexportedRuntimeFunction('getValue', false);
 unexportedRuntimeFunction('allocate', false);
@@ -4680,7 +4689,7 @@ unexportedRuntimeFunction('stackTrace', false);
 unexportedRuntimeFunction('addOnPreRun', false);
 unexportedRuntimeFunction('addOnInit', false);
 unexportedRuntimeFunction('addOnPreMain', false);
-unexportedRuntimeFunction('addOnExit', false);
+Module["addOnExit"] = addOnExit;
 unexportedRuntimeFunction('addOnPostRun', false);
 unexportedRuntimeFunction('writeStringToMemory', false);
 unexportedRuntimeFunction('writeArrayToMemory', false);
