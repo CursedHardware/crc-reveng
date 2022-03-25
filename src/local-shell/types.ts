@@ -1,7 +1,7 @@
-import type { LocalEchoAddon } from '@gytx/xterm-local-echo'
+import type { Terminal } from 'xterm'
 
 export type CommandProcedure = (
-  echo: LocalEchoAddon,
+  term: Terminal,
   argv: string[],
 ) => Promise<void> | void
 

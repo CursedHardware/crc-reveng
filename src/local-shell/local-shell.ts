@@ -8,12 +8,14 @@ export type CommandTable = Record<string, CommandProcedure>
 export class LocalShellAddon implements ITerminalAddon {
   private commands: Map<string, CommandProcedure>
   private echo = new LocalEchoAddon()
+  private terminal: Terminal | undefined
 
   constructor(commands: CommandTable) {
     this.commands = new Map(Object.entries<CommandProcedure>(commands))
   }
 
   activate(terminal: Terminal) {
+    this.terminal = terminal
     this.echo.activate(terminal)
     this.echo.history.entries.push(...this.commands.keys())
     this.repl()
@@ -38,8 +40,9 @@ export class LocalShellAddon implements ITerminalAddon {
 
   private async run(command: string | undefined, args: string[]) {
     if (command === undefined) return
+    if (this.terminal === undefined) return
     const procedure = this.commands.get(command)
     if (!procedure) throw new CommandNotFoundError(command)
-    return procedure(this.echo, args)
+    return procedure(this.terminal, args)
   }
 }

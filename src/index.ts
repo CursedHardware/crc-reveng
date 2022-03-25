@@ -10,15 +10,18 @@ import { LocalShellAddon } from './local-shell'
 import { CommandTable } from './local-shell/local-shell'
 
 const commands: CommandTable = {
-  async reveng(echo, argv) {
+  clear(term) {
+    term.clear()
+  },
+  async reveng(term, argv) {
     await program({
       thisProgram: 'reveng',
       arguments: argv,
       print(message) {
-        echo.println(message)
+        term.writeln(message)
       },
       printErr(message) {
-        echo.println(message)
+        term.writeln(message)
       },
     })
   },
