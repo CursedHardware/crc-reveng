@@ -3,7 +3,6 @@ import HTMLPlugin from 'html-webpack-plugin'
 
 const configure: Configuration = {
   context: __dirname,
-  mode: 'development',
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
     fallback: {
