@@ -1,13 +1,12 @@
 #!/bin/bash
 set -xeuo pipefail
 
-cp -v config.h reveng-3.0.2/config.h
-
 pushd reveng-3.0.2
 
 find . -name '*.o'
 
 emcc -O3 -Wall -ansi -c \
+  -DPRESETS=1 \
   bmpbit.c cli.c model.c poly.c preset.c reveng.c
 
 pushd contrib
