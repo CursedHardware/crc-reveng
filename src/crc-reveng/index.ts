@@ -1,12 +1,12 @@
-const worker = new Worker(new URL('./worker.ts', import.meta.url))
+type MessageType =
+  | { event: 'stdout' | 'stderr'; message: string }
+  | { event: 'exit' }
 
 export function runRevEng(argv: string[], print: (message: string) => void) {
+  const worker = new Worker(new URL('./worker.ts', import.meta.url))
   return new Promise<void>((resolve) => {
     const handleMessage = (event: MessageEvent) => {
-      type DataType =
-        | { event: 'stdout' | 'stderr'; message: string }
-        | { event: 'exit' }
-      const data = event.data as DataType
+      const data: MessageType = event.data
       if (data.event === 'exit') {
         worker.removeEventListener('message', handleMessage)
         resolve()
@@ -18,14 +18,3 @@ export function runRevEng(argv: string[], print: (message: string) => void) {
     worker.postMessage(argv)
   })
 }
-
-// await program({
-//   thisProgram: 'reveng',
-//   arguments: argv,
-//   print(message) {
-//     term.writeln(message)
-//   },
-//   printErr(message) {
-//     term.writeln(message)
-//   },
-// })
