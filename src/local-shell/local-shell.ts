@@ -51,8 +51,7 @@ export class LocalShellAddon implements ITerminalAddon {
 
   private onAutoCompleteCommandHandler = (index: number, tokens: string[]) => {
     if (index !== 0) return []
-    const commands = [...this.commands.keys()]
-    return commands.filter((x) => !tokens.includes(x))
+    return [...this.commands.keys()]
   }
 
   private onAutoCompleteArgvHandler = (index: number, tokens: string[]) => {
