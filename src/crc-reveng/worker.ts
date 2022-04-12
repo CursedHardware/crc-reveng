@@ -1,14 +1,14 @@
 import program from './reveng'
 
-self.addEventListener('message', async (event) => {
-  const module = await program({
+self.addEventListener('message', (event) => {
+  program({
     thisProgram: 'reveng',
     arguments: event.data,
     print(message) {
-      postMessage({ event: 'stdout', message })
+      self.postMessage({ event: 'stdout', message })
     },
     printErr(message) {
-      postMessage({ event: 'stderr', message })
+      self.postMessage({ event: 'stderr', message })
     },
     postRun: [() => postMessage({ event: 'exit' })],
   })

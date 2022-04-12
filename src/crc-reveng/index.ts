@@ -2,16 +2,17 @@ type MessageType =
   | { event: 'stdout' | 'stderr'; message: string }
   | { event: 'exit' }
 
-export function runRevEng(argv: string[], print: (message: string) => void) {
-  const worker = new Worker(new URL('./worker.ts', import.meta.url))
+const worker = new Worker(new URL('./worker.ts', import.meta.url))
+
+export function runRevEng(argv: string[], stream: WritableStream) {
+  const writer = stream.getWriter()
   return new Promise<void>((resolve) => {
-    const handleMessage = (event: MessageEvent) => {
-      const data: MessageType = event.data
+    const handleMessage = ({ data }: MessageEvent<MessageType>) => {
       if (data.event === 'exit') {
         worker.removeEventListener('message', handleMessage)
         resolve()
       } else {
-        print(data.message)
+        writer.write(data.message)
       }
     }
     worker.addEventListener('message', handleMessage)
