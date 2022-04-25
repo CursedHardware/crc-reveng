@@ -9,7 +9,7 @@ export const commands: CommandTable = {
   },
   reveng: {
     procedure(term, argv) {
-      const stream = new WritableStream({
+      const stream = new WritableStream<string>({
         write(chunk) {
           term.writeln(chunk)
         },

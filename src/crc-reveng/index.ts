@@ -4,7 +4,7 @@ type MessageType =
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url))
 
-export function runRevEng(argv: string[], stream: WritableStream) {
+export function runRevEng(argv: string[], stream: WritableStream<string>) {
   const writer = stream.getWriter()
   return new Promise<void>((resolve) => {
     const handleMessage = ({ data }: MessageEvent<MessageType>) => {
