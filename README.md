@@ -1,4 +1,4 @@
-# CRC-RevEng 3.0.2 Online Edition
+# CRC-RevEng Online Edition
 
 Website: <https://crc-reveng.septs.app>
 
