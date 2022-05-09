@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xeuo pipefail
 
-pushd reveng-3.0.2
+pushd reveng-3.0.3
 
 find . -name '*.o'
 
