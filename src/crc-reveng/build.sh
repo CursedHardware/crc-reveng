@@ -1,17 +1,13 @@
 #!/bin/bash
 set -xeuo pipefail
 
-pushd reveng-3.0.3
+pushd reveng-3.0.5
 
-find . -name '*.o'
+find . -name '*.o' | xargs rm -v
 
-emcc -O3 -Wall -ansi -c \
-  -DPRESETS=1 \
-  bmpbit.c cli.c model.c poly.c preset.c reveng.c
+emcc -O3 -Wall -ansi -c -DPRESETS=1 $(find . -depth 1 -name '*.c')
 
-pushd contrib
-emcc -O3 -Wall -ansi -c getopt.c
-popd
+emcc -O3 -Wall -ansi -c -DPRESETS=1 $(find contrib -depth 1 -name '*.c')
 
 emcc \
   -s WASM=1 \
@@ -21,4 +17,4 @@ emcc \
   -s EXPORTED_FUNCTIONS="['_reveng', '_main']" \
   -s EXPORTED_RUNTIME_METHODS="['ccall', 'cwrap']" \
   -o ../reveng.js \
-  bmpbit.o cli.o model.o poly.o preset.o reveng.o contrib/getopt.o
+  $(find . -name '*.o')
